@@ -76,7 +76,7 @@ module Mastodon
     LONG_DESC
     def create(username)
       account  = Account.new(username: username)
-      password = SecureRandom.hex
+      password = ENV['PASSWORD'] || SecureRandom.hex
       user     = User.new(email: options[:email], password: password, agreement: true, approved: true, admin: options[:role] == 'admin', moderator: options[:role] == 'moderator', confirmed_at: options[:confirmed] ? Time.now.utc : nil, bypass_invite_request_check: true)
 
       if options[:reattach]
@@ -88,6 +88,26 @@ module Mastodon
           return
         elsif account.user.present?
           DeleteAccountService.new.call(account, reserve_email: false)
+        end
+      end
+
+      if ENV['SINGLE_USER_MODE']
+        u = Account.find_local(username)&.user
+        if !u.nil?
+          u.password = password if ENV['PASSWORD']
+          u.email = options[:email] if options[:email]
+          if u.save
+            say('OK', :green)
+            return
+          else
+            u.errors.to_h.each do |key, error|
+              say('Failure/Error: ', :red)
+              say(key)
+              say('    ' + error, :red)
+            end
+    
+            exit(1)
+          end
         end
       end
 

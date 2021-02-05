@@ -131,7 +131,7 @@ class User < ApplicationRecord
   attr_writer :external, :bypass_invite_request_check
 
   def confirmed?
-    confirmed_at.present?
+    true
   end
 
   def invited?

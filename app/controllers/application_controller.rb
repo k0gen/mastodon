@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
   private
 
   def https_enabled?
-    Rails.env.production? && !request.path.start_with?('/health')
+    false
   end
 
   def authorized_fetch_mode?

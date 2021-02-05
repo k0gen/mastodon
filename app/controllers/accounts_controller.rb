@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class AccountsController < ApplicationController
+  force_ssl if: :ssl_configured?
+
+  def ssl_configured?
+    false
+  end
+  
   PAGE_SIZE     = 20
   PAGE_SIZE_MAX = 200
 
