@@ -88,10 +88,10 @@ class Webfinger
   end
 
   def standard_url
-    "https://#{@domain}/.well-known/webfinger?resource=#{@uri}"
+    "http://#{@domain}/.well-known/webfinger?resource=#{@uri}"
   end
 
   def host_meta_url
-    "https://#{@domain}/.well-known/host-meta"
+    "http://#{@domain}/.well-known/host-meta"
   end
 end
