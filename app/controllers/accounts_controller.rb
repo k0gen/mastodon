@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
 class AccountsController < ApplicationController
-  force_ssl if: :ssl_configured?
 
-  def ssl_configured?
-    false
-  end
-  
+  force_ssl if: :https_enabled?
+
   PAGE_SIZE     = 20
   PAGE_SIZE_MAX = 200
 
@@ -61,6 +58,10 @@ class AccountsController < ApplicationController
   end
 
   private
+
+  def https_enabled?
+    Rails.env.production? && !request.headers["Host"].ends_with?(".onion")
+  end
 
   def set_body_classes
     @body_classes = 'with-modals'

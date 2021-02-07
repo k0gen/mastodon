@@ -131,7 +131,7 @@ class User < ApplicationRecord
   attr_writer :external, :bypass_invite_request_check
 
   def confirmed?
-    true
+    config.x.disable_mailer || confirmed_at.present?
   end
 
   def invited?

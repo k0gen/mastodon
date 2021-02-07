@@ -7,11 +7,12 @@ web_host = ENV.fetch('WEB_DOMAIN') { host }
 alternate_domains = ENV.fetch('ALTERNATE_DOMAINS') { '' }
 
 Rails.application.configure do
-  https = false
+  https = (Rails.env.production? || ENV['LOCAL_HTTPS'] == 'true') && !host.ends_with('.onion')
 
   config.x.local_domain = host
   config.x.web_domain   = web_host
   config.x.use_https    = https
+  config.force_ssl      = https
   config.x.use_s3       = ENV['S3_ENABLED'] == 'true'
   config.x.use_swift    = ENV['SWIFT_ENABLED'] == 'true'
 
