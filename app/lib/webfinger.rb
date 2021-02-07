@@ -99,7 +99,7 @@ class Webfinger
     if @domain.ends_with? ".onion"
       "http://#{@domain}/.well-known/host-meta"
     else
-      "https://#{@domain}/.well-known/webfinger?resource=#{@uri}"
+      "https://#{@domain}/.well-known/host-meta"
     end
   end
 end
