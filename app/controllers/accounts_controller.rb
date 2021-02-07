@@ -60,7 +60,7 @@ class AccountsController < ApplicationController
   private
 
   def https_enabled?
-    (Rails.env.production? || ENV['LOCAL_HTTPS'] == 'true') && !request.headers["Host"].ends_with?(".onion")
+    Rails.env.production? && !request.headers["Host"].ends_with?(".onion")
   end
 
   def set_body_classes
