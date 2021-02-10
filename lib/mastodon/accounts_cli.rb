@@ -57,6 +57,7 @@ module Mastodon
     option :role, default: 'user', enum: %w(user moderator admin)
     option :reattach, type: :boolean
     option :force, type: :boolean
+    option :password
     desc 'create USERNAME', 'Create a new user'
     long_desc <<-LONG_DESC
       Create a new user account with a given USERNAME and an
@@ -76,7 +77,7 @@ module Mastodon
     LONG_DESC
     def create(username)
       account  = Account.new(username: username)
-      password = SecureRandom.hex
+      password = options[:password] || SecureRandom.hex
       user     = User.new(email: options[:email], password: password, agreement: true, approved: true, admin: options[:role] == 'admin', moderator: options[:role] == 'moderator', confirmed_at: options[:confirmed] ? Time.now.utc : nil, bypass_invite_request_check: true)
 
       if options[:reattach]
@@ -88,6 +89,13 @@ module Mastodon
           return
         elsif account.user.present?
           DeleteAccountService.new.call(account, reserve_email: false)
+        end
+      end
+
+      if ENV['SINGLE_USER_MODE']
+        u = Account.find_local(username)&.user
+        if !u.nil?
+          modify(username)
         end
       end
 
@@ -120,6 +128,7 @@ module Mastodon
     option :disable, type: :boolean
     option :disable_2fa, type: :boolean
     option :approve, type: :boolean
+    option :password
     option :reset_password, type: :boolean
     desc 'modify USERNAME', 'Modify a user'
     long_desc <<-LONG_DESC
@@ -156,8 +165,8 @@ module Mastodon
         user.moderator = options[:role] == 'moderator'
       end
 
-      password = SecureRandom.hex if options[:reset_password]
-      user.password = password if options[:reset_password]
+      password = options[:reset_password] ? SecureRandom.hex : options[:password]
+      user.password = password if !password.nil?
       user.email = options[:email] if options[:email]
       user.disabled = false if options[:enable]
       user.disabled = true if options[:disable]
