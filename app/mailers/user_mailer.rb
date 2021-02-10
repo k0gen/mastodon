@@ -16,6 +16,8 @@ class UserMailer < Devise::Mailer
     @token    = token
     @instance = Rails.configuration.x.local_domain
 
+    return if Rails.configuration.x.disable_mailer
+
     return unless @resource.active_for_authentication?
 
     I18n.with_locale(@resource.locale || I18n.default_locale) do
@@ -30,6 +32,8 @@ class UserMailer < Devise::Mailer
     @token    = token
     @instance = Rails.configuration.x.local_domain
 
+    return if Rails.configuration.x.disable_mailer
+
     return unless @resource.active_for_authentication?
 
     I18n.with_locale(@resource.locale || I18n.default_locale) do
@@ -40,6 +44,8 @@ class UserMailer < Devise::Mailer
   def password_change(user, **)
     @resource = user
     @instance = Rails.configuration.x.local_domain
+
+    return if Rails.configuration.x.disable_mailer
 
     return unless @resource.active_for_authentication?
 
@@ -52,6 +58,8 @@ class UserMailer < Devise::Mailer
     @resource = user
     @instance = Rails.configuration.x.local_domain
 
+    return if Rails.configuration.x.disable_mailer
+
     return unless @resource.active_for_authentication?
 
     I18n.with_locale(@resource.locale || I18n.default_locale) do
@@ -62,6 +70,8 @@ class UserMailer < Devise::Mailer
   def two_factor_enabled(user, **)
     @resource = user
     @instance = Rails.configuration.x.local_domain
+
+    return if Rails.configuration.x.disable_mailer
 
     return unless @resource.active_for_authentication?
 
@@ -74,6 +84,8 @@ class UserMailer < Devise::Mailer
     @resource = user
     @instance = Rails.configuration.x.local_domain
 
+    return if Rails.configuration.x.disable_mailer
+
     return unless @resource.active_for_authentication?
 
     I18n.with_locale(@resource.locale || I18n.default_locale) do
@@ -84,6 +96,8 @@ class UserMailer < Devise::Mailer
   def two_factor_recovery_codes_changed(user, **)
     @resource = user
     @instance = Rails.configuration.x.local_domain
+
+    return if Rails.configuration.x.disable_mailer
 
     return unless @resource.active_for_authentication?
 
@@ -96,6 +110,8 @@ class UserMailer < Devise::Mailer
     @resource = user
     @instance = Rails.configuration.x.local_domain
 
+    return if Rails.configuration.x.disable_mailer
+
     return unless @resource.active_for_authentication?
 
     I18n.with_locale(@resource.locale || I18n.default_locale) do
@@ -106,6 +122,8 @@ class UserMailer < Devise::Mailer
   def webauthn_disabled(user, **)
     @resource = user
     @instance = Rails.configuration.x.local_domain
+
+    return if Rails.configuration.x.disable_mailer
 
     return unless @resource.active_for_authentication?
 
@@ -119,6 +137,8 @@ class UserMailer < Devise::Mailer
     @instance = Rails.configuration.x.local_domain
     @webauthn_credential = webauthn_credential
 
+    return if Rails.configuration.x.disable_mailer
+
     return unless @resource.active_for_authentication?
 
     I18n.with_locale(@resource.locale || I18n.default_locale) do
@@ -131,6 +151,8 @@ class UserMailer < Devise::Mailer
     @instance = Rails.configuration.x.local_domain
     @webauthn_credential = webauthn_credential
 
+    return if Rails.configuration.x.disable_mailer
+
     return unless @resource.active_for_authentication?
 
     I18n.with_locale(@resource.locale || I18n.default_locale) do
@@ -141,6 +163,8 @@ class UserMailer < Devise::Mailer
   def welcome(user)
     @resource = user
     @instance = Rails.configuration.x.local_domain
+
+    return if Rails.configuration.x.disable_mailer
 
     return unless @resource.active_for_authentication?
 
@@ -154,6 +178,8 @@ class UserMailer < Devise::Mailer
     @instance = Rails.configuration.x.local_domain
     @backup   = backup
 
+    return if Rails.configuration.x.disable_mailer
+
     return unless @resource.active_for_authentication?
 
     I18n.with_locale(@resource.locale || I18n.default_locale) do
@@ -166,6 +192,8 @@ class UserMailer < Devise::Mailer
     @warning  = warning
     @instance = Rails.configuration.x.local_domain
     @statuses = @warning.statuses.includes(:account, :preloadable_poll, :media_attachments, active_mentions: [:account])
+
+    return if Rails.configuration.x.disable_mailer
 
     I18n.with_locale(@resource.locale || I18n.default_locale) do
       mail to: @resource.email, subject: I18n.t("user_mailer.warning.subject.#{@warning.action}", acct: "@#{user.account.local_username_and_domain}")
@@ -200,6 +228,13 @@ class UserMailer < Devise::Mailer
     @detection  = Browser.new(user_agent)
     @timestamp  = timestamp.to_time.utc
 
+<<<<<<< HEAD
+=======
+    return if Rails.configuration.x.disable_mailer
+
+    return unless @resource.active_for_authentication?
+
+>>>>>>> add flag to disable mailer
     I18n.with_locale(@resource.locale || I18n.default_locale) do
       mail to: @resource.email, subject: I18n.t('user_mailer.suspicious_sign_in.subject')
     end

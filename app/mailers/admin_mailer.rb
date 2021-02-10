@@ -10,6 +10,8 @@ class AdminMailer < ApplicationMailer
     @me       = recipient
     @instance = Rails.configuration.x.local_domain
 
+    return if Rails.configuration.x.disable_mailer
+
     locale_for_account(@me) do
       mail to: @me.user_email, subject: I18n.t('admin_mailer.new_report.subject', instance: @instance, id: @report.id)
     end
@@ -30,6 +32,8 @@ class AdminMailer < ApplicationMailer
     @me       = recipient
     @instance = Rails.configuration.x.local_domain
 
+    return if Rails.configuration.x.disable_mailer
+
     locale_for_account(@me) do
       mail to: @me.user_email, subject: I18n.t('admin_mailer.new_pending_account.subject', instance: @instance, username: @account.username)
     end
@@ -44,6 +48,8 @@ class AdminMailer < ApplicationMailer
     @lowest_trending_status = Trends.statuses.query.allowed.limit(Trends.statuses.options[:review_threshold]).last
     @me                     = recipient
     @instance               = Rails.configuration.x.local_domain
+
+    return if Rails.configuration.x.disable_mailer
 
     locale_for_account(@me) do
       mail to: @me.user_email, subject: I18n.t('admin_mailer.new_trends.subject', instance: @instance)
