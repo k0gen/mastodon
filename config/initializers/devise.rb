@@ -8,6 +8,10 @@ Warden::Manager.after_set_user except: :fetch do |user, warden|
     value: session_id,
     expires: 1.year.from_now,
     httponly: true,
+<<<<<<< HEAD
+=======
+    secure: Rails.configuration.x.use_https,
+>>>>>>> fix onion federation
     same_site: :lax,
   }
 end
@@ -22,6 +26,10 @@ Warden::Manager.after_fetch do |user, warden|
       value: session_id,
       expires: 1.year.from_now,
       httponly: true,
+<<<<<<< HEAD
+=======
+      secure: Rails.configuration.x.use_https,
+>>>>>>> fix onion federation
       same_site: :lax,
     }
   else
