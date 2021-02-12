@@ -92,13 +92,6 @@ module Mastodon
         end
       end
 
-      if ENV['SINGLE_USER_MODE']
-        u = Account.find_local(username)&.user
-        if !u.nil?
-          modify(username)
-        end
-      end
-
       account.suspended_at = nil
       user.account         = account
 
@@ -109,7 +102,9 @@ module Mastodon
         end
 
         say('OK', :green)
-        say("New password: #{password}")
+        if options[:password].nil?
+          say("New password: #{password}")
+        end
       else
         user.errors.to_h.each do |key, error|
           say('Failure/Error: ', :red)
@@ -513,6 +508,36 @@ module Mastodon
       else
         exit(1)
       end
+    end
+
+    option :email
+    option :confirm, type: :boolean
+    option :role
+    option :password, required: true
+    option :force, type: :boolean
+    desc 'migrate OLD_USERNAME NEW_USERNAME', 'Migrate a user to a new username on the same server'
+    long_desc <<~LONG_DESC
+      Migrate a user to a new account, created with the provided settings.
+
+      If the provided password does not match the old account, you must provide
+      the --force option to create the new account with the provided password.
+    LONG_DESC
+    def migrate(old_username, new_username)
+      if old_username == new_username
+        modify(old_username)
+      end
+      old_account = Account.find_local(old_username)
+      if !old_account.user.external_or_valid_password?(options[:password]) && !options[:force]
+        say('The provided password does not match the old account', :red)
+        say('Use --force to change the password on the new account')
+        return
+      end
+      options[:confirmed] = options[:confirm]
+      create(new_account)
+      new_account = Account.find_local(username: new_username)
+      
+      migration = old_account.migrations.build(acct: "#{new_username}@#{Rails.configuration.x.local_domain}")
+      MoveService.new.call(migration)
     end
 
     private
