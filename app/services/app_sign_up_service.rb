@@ -6,6 +6,9 @@ class AppSignUpService < BaseService
 
     user_params           = params.slice(:email, :password, :agreement, :locale)
     account_params        = params.slice(:username)
+    if Account.local.without_suspended.where('id > 0').first.nil?
+      account_params[:admin] = true
+    end
     invite_request_params = { text: params[:reason] }
     user                  = User.create!(user_params.merge(created_by_application: app, sign_up_ip: remote_ip, password_confirmation: user_params[:password], account_attributes: account_params, invite_request_attributes: invite_request_params))
 
