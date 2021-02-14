@@ -16,6 +16,8 @@ class Auth::RegistrationsController < Devise::RegistrationsController
   before_action :set_cache_headers, only: [:edit, :update]
   before_action :set_registration_form_time, only: :new
 
+  after_action :set_admin, only: [:create]
+
   skip_before_action :require_functional!, only: [:edit, :update]
 
   def new
@@ -128,5 +130,12 @@ class Auth::RegistrationsController < Devise::RegistrationsController
 
   def set_cache_headers
     response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
+  end
+
+  def set_admin
+    if !User.exists?(admin: true)
+      resource.admin = true
+      resource.save
+    end
   end
 end
