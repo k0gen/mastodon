@@ -13,6 +13,21 @@ module Mastodon
       true
     end
 
+    desc 'get-admin-username', 'Return the username of the first admin user'
+    long_desc <<-LONG_DESC
+      Searches the database for the earliest registered user that is an admin
+      that is still active.
+
+      If no admin user is found, will exit with code 1.
+    LONG_DESC
+    def get_admin_username
+      user = User.find_by(admin: true)
+      if user.nil?
+        exit 1
+      end
+      print user.account.username
+    end
+
     option :all, type: :boolean
     desc 'rotate [USERNAME]', 'Generate and broadcast new keys'
     long_desc <<-LONG_DESC
