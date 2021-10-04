@@ -13,15 +13,14 @@ module Mastodon
       true
     end
 
-    desc 'get-admin-username', 'Return the username of the first admin user'
+    desc 'get-first-username', 'Return the username of the first user'
     long_desc <<-LONG_DESC
-      Searches the database for the earliest registered user that is an admin
-      that is still active.
+      Searches the database for the earliest registered user.
 
-      If no admin user is found, will exit with code 1.
+      If no user is found, will exit with code 1.
     LONG_DESC
-    def get_admin_username
-      user = User.find_by(admin: true)
+    def get_first_username
+      user = User.first
       if user.nil?
         exit 1
       end
