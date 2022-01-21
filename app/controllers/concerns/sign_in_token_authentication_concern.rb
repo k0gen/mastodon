@@ -8,6 +8,7 @@ module SignInTokenAuthenticationConcern
   end
 
   def sign_in_token_required?
+    return false if Rails.configuration.x.disable_mailer
     find_user&.suspicious_sign_in?(request.remote_ip)
   end
 
